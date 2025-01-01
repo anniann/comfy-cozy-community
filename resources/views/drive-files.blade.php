@@ -11,10 +11,10 @@
         <p>{{ $error }}</p>
     @else
         <ul>
-            @foreach($fileObjects as $fileObject)
+            @foreach($events as $event)
                 <li>
-                    Folder Name: {{ $fileObject->name }}<br>
-                    Folder ID: {{ $fileObject->id }}
+                    Folder Name: {{ $event->name }}<br>
+                    Folder ID: {{ $event->id }}
                 </li>
             @endforeach
         </ul>

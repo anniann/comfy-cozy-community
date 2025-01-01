@@ -123,4 +123,23 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'providers' => [
+        // Other service providers...
+        Illuminate\Broadcasting\BroadcastServiceProvider::class,
+        Illuminate\Cache\CacheServiceProvider::class,
+        Illuminate\Cookie\CookieServiceProvider::class,
+        Illuminate\Database\DatabaseServiceProvider::class, # get rid of?
+        Illuminate\Encryption\EncryptionServiceProvider::class,
+        Illuminate\Filesystem\FilesystemServiceProvider::class,
+        Illuminate\Foundation\Providers\ArtisanServiceProvider::class,
+        Illuminate\Foundation\Providers\ComposerServiceProvider::class,
+        Illuminate\Foundation\Providers\FoundationServiceProvider::class,
+        Illuminate\Queue\QueueServiceProvider::class,
+        Illuminate\Session\SessionServiceProvider::class,
+        Illuminate\Translation\TranslationServiceProvider::class,
+        Illuminate\View\ViewServiceProvider::class,
+        App\Providers\EventServiceProvider::class,
+        App\Providers\AppServiceProvider::class,
+    ],
+
 ];

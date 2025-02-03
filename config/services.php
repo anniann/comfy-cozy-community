@@ -17,6 +17,7 @@ return [
     'google' => [
         'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'events_folder_id' => env('GOOGLE_EVENTS_FOLDER_ID'),
         // 'redirect_uri' => env('GOOGLE_REDIRECT_URI'),
     ],
 

@@ -1,0 +1,49 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-nginx:
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - name: Deploy Nginx
+        run: |
+          echo "todo"
+  deploy-website:
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up SSH for server and GitHub
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY_SERVER }}" > ~/.ssh/id_rsa_server
+          echo "${{ secrets.SSH_PRIVATE_KEY_GITHUB }}" > ~/.ssh/id_rsa_github
+          chmod 600 ~/.ssh/id_rsa_server
+          chmod 600 ~/.ssh/id_rsa_github
+          echo -e "Host github.com\n  IdentityFile ~/.ssh/id_rsa_github\n" >> ~/.ssh/config
+          echo -e "Host ${DROPLET_IP}\n  IdentityFile ~/.ssh/id_rsa_server\n" >> ~/.ssh/config
+      - name: Deploy Comfy Cozy Website
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.DROPLET_IP }}
+          username: ${{ secrets.DROPLET_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY_SERVER }}
+          script: |
+            if [ -d "/var/www/comfy-cozy-community/.git" ]; then
+              cd /var/www/comfy-cozy-community && git pull origin main
+            else
+              echo "Not a Git repository in /var/www/comfy-cozy-community"
+              exit 1
+            fi
+            sudo -u www-data git reset --hard origin/main
+            sudo -u www-data composer install --no-dev --optimize-autoloader
+            sudo -u www-data php artisan cache:clear
+            sudo -u www-data php artisan config:cache
+            sudo systemctl restart php8.3-fpm
+            sudo systemctl restart nginx

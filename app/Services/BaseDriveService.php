@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Contracts\DriveService;
 use App\Models\File;
+use Google\Service\Drive\DriveFile;
 
 use Illuminate\Support\Facades\Log;
 
@@ -100,6 +101,31 @@ abstract class BaseDriveService implements DriveService
             // Handle any other errors
             Log::error('An error occurred: {err}', ['err' => $e->getMessage()]);
             return null;
+        }
+    }
+
+    protected function uploadFile(DriveFile $file, string $content): ?string
+    {
+        try {
+            $file->parents = [$this->folderId];
+            $uploadedFile = $this->driveService->files->create($file, [
+                'data' => $content,
+                'mimeType' => 'text/plain',
+                'uploadType' => 'multipart'
+            ]);
+            Log::info("File uploaded successfully: " . $uploadedFile->getId());
+            return $uploadedFile->getId();
+        } catch (Google_Service_Exception $e) {
+            // Handle API error
+            Log::error('Drive Error occured while uploading file', [
+                'err' => json_decode($e->getMessage())->error->errors[0]->message, 
+                'fileName' => $file->getName
+            ]);
+            return "";
+        } catch (Exception $e) {
+            // Handle any other errors
+            Log::error('An error occurred: {err}', ['err' => $e->getMessage()]);
+            return "";
         }
     }
 }

@@ -4,8 +4,8 @@ namespace App\Models;
 
 class File
 {
-    public $id;
-    public $name;
+    public string $id;
+    public string $name;
     public $mimeType;
     public $textContent;
 
